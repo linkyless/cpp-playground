@@ -41,6 +41,7 @@ int main() {
 
         if (needsRedraw) {
             sf::Image image(sf::Vector2u(kWidth, kHeight), sf::Color::Black);
+            
             int maxIters = getMaxIters(width);
 
             #pragma omp parallel for collapse(2)
@@ -50,8 +51,8 @@ int main() {
                     c.real = pixelToReal(cx, x, width);
                     c.imag = pixelToImag(cy, y, height);
                     int iters = itersOfMandelbrot(c, width);
-                    int numcolor = (int)((double)iters / maxIters * 255); // color based on iteration count
-                    sf::Color color = sf::Color(0, 0, numcolor, 255);
+                    double h = std::fmod((double)iters / maxIters * 360.0 * 3, 360.0);
+                    sf::Color color = (iters == maxIters) ? sf::Color::Black : hsvToRgb(h, 1.0, 1.0);
                     image.setPixel(sf::Vector2u(x, y), color);
                 }
             }
