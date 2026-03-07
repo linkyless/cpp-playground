@@ -49,9 +49,9 @@ int main() {
                     Complex c;
                     c.real = pixelToReal(cx, x, width);
                     c.imag = pixelToImag(cy, y, height);
-                    
-                    int iters = itersOfMandelbrot(c);
-                    int numcolor = (int)((double)iters / 200.0 * 255); // color based on iteration count
+                    int iters = itersOfMandelbrot(c, width);
+                    int maxIters = getMaxIters(width);
+                    int numcolor = (int)((double)iters / maxIters * 255); // color based on iteration count
                     sf::Color color = sf::Color(0, 0, numcolor, 255);
                     image.setPixel(sf::Vector2u(x, y), color);
                 }

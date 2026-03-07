@@ -1,3 +1,8 @@
+#include <algorithm>
+
+const double kItersFactor = 50.00;
+const double limitOfMaxIters = 1000.00;
+
 struct Complex {
     double real;
     double imag;
@@ -21,9 +26,12 @@ bool converges(Complex x) {
     return x.real * x.real + x.imag * x.imag < 4; 
 }
 
-int itersOfMandelbrot(Complex c) {
-    const int maxIter = 200;
-    
+double getMaxIters(double width) {
+    return std::min(kItersFactor / width, limitOfMaxIters);
+}
+
+int itersOfMandelbrot(Complex c, double width) {
+    const double maxIter = getMaxIters(width);
     Complex z0 = {0, 0};
     Complex z = z0;
 
@@ -47,3 +55,4 @@ double pixelToImag(double cy, double y, double height) {
     double result = cy - height / 2.0 + (y / 600.0) * height;
     return result;
 }
+
