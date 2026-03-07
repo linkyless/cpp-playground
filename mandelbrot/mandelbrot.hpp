@@ -37,3 +37,13 @@ int itersOfMandelbrot(Complex c) {
 
     return count;
 }
+
+double pixelToReal(int original) {
+    double result = -2.5 + (double) original / 800.0 * 3.5;
+    return result;
+}
+
+double pixelToImag(int original) {
+    double result = -1.5 + (double) original / 600.0 * 3.0;
+    return result;
+}
