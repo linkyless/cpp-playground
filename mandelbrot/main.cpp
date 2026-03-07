@@ -2,7 +2,7 @@
 #include "mandelbrot.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "Mandelbrot Set");
+    sf::RenderWindow window(sf::VideoMode({kWidth, kHeight}), "Mandelbrot Set");
     
     double cx = -0.5; // R-Center
     double cy = 0.0; // Z-Center
@@ -11,7 +11,7 @@ int main() {
 
     bool needsRedraw = true;
 
-    sf::Texture texture(sf::Vector2u(800, 600));
+    sf::Texture texture(sf::Vector2u(kWidth, kHeight));
     
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -21,36 +21,34 @@ int main() {
                 auto mousePos = sf::Mouse::getPosition(window);
                 
                 // New Center
-                double newCx = pixelToReal(cx, mousePos.x, width);
-                double newCy = pixelToImag(cy, mousePos.y, height);
-                cx = newCx;
-                cy = newCy;
+                cx = pixelToReal(cx, mousePos.x, width);
+                cy = pixelToImag(cy, mousePos.y, height);
                 
                 auto scroll = event -> getIf<sf::Event::MouseWheelScrolled>();
                 if (scroll -> delta > 0) {
                     // 10% zoom in
-                    width *= 0.9;
-                    height *= 0.9;
+                    width *= kZoomIn;
+                    height *= kZoomIn;
                 }
                 else {
                     // 10% zoom out
-                    width *= 1.1;
-                    height *= 1.1;
+                    width *= kZoomOut;
+                    height *= kZoomOut;
                 }
                 needsRedraw = true;
             }
         }
 
         if (needsRedraw) {
-            sf::Image image(sf::Vector2u(800, 600), sf::Color::Black);
+            sf::Image image(sf::Vector2u(kWidth, kHeight), sf::Color::Black);
+            int maxIters = getMaxIters(width);
 
-            for (int x = 0; x < 800; x++) {
-                for (int y = 0; y < 600; y++) {
+            for (int x = 0; x < kWidth; x++) {
+                for (int y = 0; y < kHeight; y++) {
                     Complex c;
                     c.real = pixelToReal(cx, x, width);
                     c.imag = pixelToImag(cy, y, height);
                     int iters = itersOfMandelbrot(c, width);
-                    int maxIters = getMaxIters(width);
                     int numcolor = (int)((double)iters / maxIters * 255); // color based on iteration count
                     sf::Color color = sf::Color(0, 0, numcolor, 255);
                     image.setPixel(sf::Vector2u(x, y), color);

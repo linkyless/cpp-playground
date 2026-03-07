@@ -1,7 +1,12 @@
+#pragma once
 #include <algorithm>
 
-const double kItersFactor = 50.00;
-const double limitOfMaxIters = 1000.00;
+constexpr double kItersFactor = 50.0;
+constexpr double kMaxItersLimit = 1000.0;
+constexpr double kZoomIn = 0.9; // +10%
+constexpr double kZoomOut = 1.1; // -10%
+constexpr int kWidth = 800;
+constexpr int kHeight = 600;
 
 struct Complex {
     double real;
@@ -9,49 +14,39 @@ struct Complex {
 };
 
 Complex operator*(Complex a, Complex b) {
-    Complex product;
-    product.real = a.real * b.real - a.imag * b.imag;
-    product.imag = a.real * b.imag + a.imag * b.real;
-    return product;
+    return {
+        a.real * b.real - a.imag * b.imag,
+        a.real * b.imag + a.imag * b.real
+    };
 }
 
 Complex operator+(Complex a, Complex b) {
-    Complex sum;
-    sum.real = a.real + b.real;
-    sum.imag = a.imag + b.imag;
-    return sum;
+    return {a.real + b.real, a.imag + b.imag};
 }
 
 bool converges(Complex x) {
-    return x.real * x.real + x.imag * x.imag < 4; 
+    return x.real * x.real + x.imag * x.imag < 4.0;
 }
 
-double getMaxIters(double width) {
-    return std::min(kItersFactor / width, limitOfMaxIters);
+int getMaxIters(double width) {
+    return (int)std::min(kItersFactor / width, kMaxItersLimit);
 }
 
 int itersOfMandelbrot(Complex c, double width) {
-    const double maxIter = getMaxIters(width);
-    Complex z0 = {0, 0};
-    Complex z = z0;
-
+    const int maxIter = getMaxIters(width);
+    Complex z = {0.0, 0.0};
     int count = 0;
     while (count < maxIter && converges(z)) {
-        Complex new_z = z * z + c;
-        z = new_z;
+        z = z * z + c;
         count++;
     }
-
     return count;
 }
 
 double pixelToReal(double cx, double x, double width) {
-    double result = cx - width / 2.0 + (x / 800.0) * width; 
-    return result;
+    return cx - width / 2.0 + (x / kWidth) * width;
 }
 
 double pixelToImag(double cy, double y, double height) {
-    double result = cy - height / 2.0 + (y / 600.0) * height;
-    return result;
+    return cy - height / 2.0 + (y / kHeight) * height;
 }
-
