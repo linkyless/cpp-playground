@@ -21,9 +21,9 @@ int main() {
                 c.imag = pixelToImag(y);
                 
                 int iters = itersOfMandelbrot(c);
-                if (iters == MAXITER) {
-                    image.setPixel(sf::Vector2u(x, y), sf::Color::White);                    
-                }
+                int numcolor = (int)((double)iters / 200.0 * 255); // color based on iteration count
+                sf::Color color = sf::Color(0, 0, numcolor, 255);
+                image.setPixel(sf::Vector2u(x, y), color);
             }
         }
 
