@@ -51,7 +51,7 @@ int main() {
                     c.real = pixelToReal(cx, x, width);
                     c.imag = pixelToImag(cy, y, height);
                     int iters = itersOfMandelbrot(c, width);
-                    double h = std::fmod((double)iters / maxIters * 360.0 * 3, 360.0);
+                    double h = std::fmod((double)iters / maxIters * 360.0, 360.0);
                     sf::Color color = (iters == maxIters) ? sf::Color::Black : hsvToRgb(h, 1.0, 1.0);
                     image.setPixel(sf::Vector2u(x, y), color);
                 }
