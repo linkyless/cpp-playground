@@ -43,6 +43,7 @@ int main() {
             sf::Image image(sf::Vector2u(kWidth, kHeight), sf::Color::Black);
             int maxIters = getMaxIters(width);
 
+            #pragma omp parallel for collapse(2)
             for (int x = 0; x < kWidth; x++) {
                 for (int y = 0; y < kHeight; y++) {
                     Complex c;
