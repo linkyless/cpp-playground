@@ -8,14 +8,14 @@ struct Complex {
     double imag;
 };
 
-Complex multiply(Complex a, Complex b) {
+Complex operator*(Complex a, Complex b) {
     Complex product;
     product.real = a.real * b.real - a.imag * b.imag;
     product.imag = a.real * b.imag + a.imag * b.real;
     return product;
 }
 
-Complex sum(Complex a, Complex b) {
+Complex operator+(Complex a, Complex b) {
     Complex sum;
     sum.real = a.real + b.real;
     sum.imag = a.imag + b.imag;
@@ -37,8 +37,7 @@ int itersOfMandelbrot(Complex c, double width) {
 
     int count = 0;
     while (count < maxIter && converges(z)) {
-        Complex new_z = multiply(z, z);
-        new_z = sum(new_z, c);
+        Complex new_z = z * z + c;
         z = new_z;
         count++;
     }
