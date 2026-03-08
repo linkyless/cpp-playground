@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 constexpr double kItersFactor = 50.0;
-constexpr double kMaxItersLimit = 10000.0;
+constexpr double kMaxItersLimit = 1000.0;
 constexpr double kZoomIn = 0.9; // +10%
 constexpr double kZoomOut = 1.1; // -10%
 constexpr int kWidth = 800;
