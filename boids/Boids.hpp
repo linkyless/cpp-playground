@@ -2,9 +2,10 @@
 #include "Vec2.hpp"
 #include <cmath>
 
-constexpr float defaultRadius = 50.0f;
+constexpr float defaultRadius = 80.0f;
 constexpr float kSizeWidth = 800.0f;
 constexpr float kSizeHeight = 600.0f;
+constexpr float maxVelocity = 700.0f;
 
 struct Boid {
     Vec2 position;
@@ -17,7 +18,9 @@ struct Boid {
     void update(float deltaTime, const float width, const float height) {
         // Velocity
         velocity = velocity + acceleration * deltaTime;
-        
+        if (velocity.getModulus() > maxVelocity) {
+            velocity = velocity.normalize() * maxVelocity;
+        }
         // Position
         position = position + velocity * deltaTime;
 

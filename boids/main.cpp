@@ -7,7 +7,7 @@
 
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_int_distribution<> dist(0, 180);
+std::uniform_int_distribution<> dist(0, 300);
 
 int main() {
 
@@ -33,6 +33,8 @@ int main() {
 
         sim.separation();
         sim.alignment();
+        sim.cohesion();
+
         sim.updateBoids(dt.asSeconds());
         sim.drawBoids(window);
 
