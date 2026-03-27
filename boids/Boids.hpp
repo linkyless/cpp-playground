@@ -2,7 +2,7 @@
 #include "Vec2.hpp"
 #include <cmath>
 
-constexpr float defaultRadius = 15.0f;
+constexpr float defaultRadius = 200.0f;
 constexpr float kSizeWidth = 800.0f;
 constexpr float kSizeHeight = 600.0f;
 
@@ -15,14 +15,18 @@ struct Boid {
     const float radius = defaultRadius;
 
     void update(float deltaTime, const float width, const float height) {
-        if (deltaTime)
+        // Velocity
+        velocity = velocity + acceleration * deltaTime;
+        
+        // Position
         position = position + velocity * deltaTime;
+
+        // wrap-around
         if (position.x > width) position.x = 0.0f;
         else if (position.x < 0) position.x = width;
-
         if (position.y > height) position.y = 0.0f;
         else if (position.y < 0) position.y = height;
-    }
 
-    
+
+    }
 };

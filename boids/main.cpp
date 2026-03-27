@@ -7,7 +7,7 @@
 
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_int_distribution<> dist(-3, 3);
+std::uniform_int_distribution<> dist(0, 180);
 
 int main() {
 
@@ -23,12 +23,15 @@ int main() {
                 window.close();
             if (event -> is<sf::Event::MouseButtonPressed>()) {
                 auto mousePos = sf::Mouse::getPosition(window);
-                Boid boid({(float)mousePos.x, (float)mousePos.y}, {180.0f, 180.0f}, {0.0f, 0.0f});
+                Boid boid({(float)mousePos.x, (float)mousePos.y}, {(float) dist(gen), (float) dist(gen)}, {0.0f, 0.0f});
                 sim.addBoid(boid);
+                sim.resizeForces();
             }
         }
 
         window.clear(sf::Color::Black);
+
+        sim.separation();
 
         sim.updateBoids(dt.asSeconds());
         sim.drawBoids(window);
