@@ -41,7 +41,7 @@ struct Vec2 {
     }
 
     float getAngleDeg() {
-        float angleRad = std::atan2f(x, y);
+        float angleRad = std::atan2f(y, x);
         float angleDeg = angleRad * 180.0f / PI;
         return angleDeg;
     }

@@ -3,18 +3,34 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-float wSeparation = 1.43f;
-float wAlignment  = 1.30f;
-float wCohesion   = 1.05f;
+float wSeparation = 1.45f;
+float wAlignment  = 1.3f;
+float wCohesion   = 1.3f;
+
+// Maps a value from [minIn, maxIn] to [minOut, maxOut]
+float mapRange(float value, float minIn, float maxIn, float minOut, float maxOut) {
+    float t = (value - minIn) / (maxIn - minIn);
+    if (t < 0.f) t = 0.f;
+    if (t > 1.f) t = 1.f;
+    return minOut + t * (maxOut - minOut);
+}
 
 struct Simulation {
     std::vector<Boid> boids;
     std::vector<Vec2> separationForces;
     std::vector<Vec2> alignmentForces;
     std::vector<Vec2> cohesionForces;
-    
+
+    // Trail effect: semi-transparent overlay drawn each frame
+    sf::RectangleShape fadeOverlay;
+
+    void init() {
+        fadeOverlay.setSize({kSizeWidth, kSizeHeight});
+        fadeOverlay.setFillColor(sf::Color(10, 10, 20, 120)); // dark navy, low alpha
+    }
+
     void resetAcceleration() {
-        for (auto &boid : boids) 
+        for (auto &boid : boids)
             boid.acceleration.x = boid.acceleration.y = 0.0f;
     }
 
@@ -38,14 +54,34 @@ struct Simulation {
     }
 
     void drawBoids(sf::RenderWindow &window) {
+        // Draw fade overlay for trail effect
+        window.draw(fadeOverlay);
+
         for (auto &boid : boids) {
-            // Position
-            sf::CircleShape triangle(13.0f, 3);
+            // Color by speed: slow = deep blue, fast = hot white-cyan
+            float speed = boid.velocity.getModulus();
+            uint8_t r = (uint8_t) mapRange(speed, 0.f, 300.f, 20.f,  180.f);
+            uint8_t g = (uint8_t) mapRange(speed, 0.f, 300.f, 80.f,  230.f);
+            uint8_t b = (uint8_t) mapRange(speed, 0.f, 300.f, 180.f, 255.f);
+            sf::Color boidColor(r, g, b, 230);
+
+
+            sf::ConvexShape triangle;
+            triangle.setPointCount(3);
+            triangle.setPoint(0, {0.f,  -12.f}); // tip
+            triangle.setPoint(1, {8.f,   8.f});  // back-right
+            triangle.setPoint(2, {-8.f,  8.f});  // back-left
+
+            triangle.setFillColor(boidColor);
+            triangle.setOutlineColor(sf::Color(255, 255, 255, 60));
+            triangle.setOutlineThickness(0.6f);
+
+            triangle.setOrigin({0.f, 0.f});
             triangle.setPosition({boid.position.x, boid.position.y});
 
-            // Rotation
             float angleDeg = boid.velocity.getAngleDeg();
-            triangle.setRotation(sf::degrees(angleDeg + 90.0f));            
+            triangle.setRotation(sf::degrees(angleDeg + 90.0f));
+
             window.draw(triangle);
         }
     }
@@ -55,11 +91,9 @@ struct Simulation {
         for (int i = 0; i < (int) boids.size(); i++) {
             for (int j = 0; j < (int) boids.size(); j++) {
                 if (i == j) continue;
-                
                 Boid a = boids[i];
                 Boid b = boids[j];
-                Vec2 sep({a.position - b.position});
-
+                Vec2 sep(a.position - b.position);
                 float distance = sep.getModulus();
                 if (distance < a.radius) {
                     SeparationForce = SeparationForce + sep;
@@ -80,7 +114,7 @@ struct Simulation {
                 if (i == j) continue;
                 Boid a = boids[i];
                 Boid b = boids[j];
-                Vec2 sep({a.position - b.position});
+                Vec2 sep(a.position - b.position);
                 float distance = sep.getModulus();
                 if (distance < a.radius) {
                     visited++;
@@ -103,7 +137,7 @@ struct Simulation {
                 if (i == j) continue;
                 Boid a = boids[i];
                 Boid b = boids[j];
-                Vec2 sep({a.position - b.position});
+                Vec2 sep(a.position - b.position);
                 float distance = sep.getModulus();
                 if (distance < a.radius) {
                     visited++;
@@ -115,5 +149,4 @@ struct Simulation {
             cohesionForces[i] = CohesionForce - boids[i].position;
         }
     }
-
 };

@@ -7,39 +7,45 @@
 
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_int_distribution<> dist(0, 300);
+std::uniform_int_distribution<> dist(-300, 300);
 
 int main() {
 
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Boids Sim");
-    sf::Clock clock;
+    window.setFramerateLimit(60);
 
+    sf::Clock clock;
     Simulation sim;
-   
+    sim.init();
+
+    // Initial clear to dark background
+    window.clear(sf::Color(10, 10, 20));
+    window.display();
+
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
         while (const std::optional event = window.pollEvent()) {
-            if (event -> is<sf::Event::Closed>())
+            if (event->is<sf::Event::Closed>())
                 window.close();
-            if (event -> is<sf::Event::MouseButtonPressed>()) {
+            if (event->is<sf::Event::MouseButtonPressed>()) {
                 auto mousePos = sf::Mouse::getPosition(window);
-                Boid boid({(float)mousePos.x, (float)mousePos.y}, {(float) dist(gen), (float) dist(gen)}, {0.0f, 0.0f});
+                Boid boid({(float)mousePos.x, (float)mousePos.y},
+                          {(float)dist(gen), (float)dist(gen)},
+                          {0.0f, 0.0f});
                 sim.addBoid(boid);
                 sim.resizeForces();
             }
         }
 
-        window.clear(sf::Color::Black);
-
         sim.separation();
         sim.alignment();
         sim.cohesion();
-
         sim.updateBoids(dt.asSeconds());
+
+        // no clear()
         sim.drawBoids(window);
 
         sim.resetAcceleration();
         window.display();
-        
     }
 }
