@@ -32,10 +32,11 @@ int main() {
         window.clear(sf::Color::Black);
 
         sim.separation();
-
+        sim.alignment();
         sim.updateBoids(dt.asSeconds());
         sim.drawBoids(window);
-        
+
+        sim.resetAcceleration();
         window.display();
         
     }

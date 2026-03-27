@@ -2,7 +2,7 @@
 #include "Vec2.hpp"
 #include <cmath>
 
-constexpr float defaultRadius = 200.0f;
+constexpr float defaultRadius = 50.0f;
 constexpr float kSizeWidth = 800.0f;
 constexpr float kSizeHeight = 600.0f;
 
