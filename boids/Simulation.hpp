@@ -3,9 +3,9 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-float wSeparation = 1.45f;
-float wAlignment  = 1.3f;
-float wCohesion   = 1.3f;
+float wSeparation = 2.45f;
+float wAlignment  = 1.55f;
+float wCohesion   = 1.49f;
 
 // Maps a value from [minIn, maxIn] to [minOut, maxOut]
 float mapRange(float value, float minIn, float maxIn, float minOut, float maxOut) {
@@ -65,7 +65,6 @@ struct Simulation {
             uint8_t b = (uint8_t) mapRange(speed, 0.f, 300.f, 180.f, 255.f);
             sf::Color boidColor(r, g, b, 230);
 
-
             sf::ConvexShape triangle;
             triangle.setPointCount(3);
             triangle.setPoint(0, {0.f,  -12.f}); // tip
@@ -87,8 +86,9 @@ struct Simulation {
     }
 
     void separation() {
-        Vec2 SeparationForce(0.0f, 0.0f);
+        #pragma omp parallel for
         for (int i = 0; i < (int) boids.size(); i++) {
+            Vec2 SeparationForce(0.0f, 0.0f);
             for (int j = 0; j < (int) boids.size(); j++) {
                 if (i == j) continue;
                 Boid a = boids[i];
@@ -105,11 +105,10 @@ struct Simulation {
     }
 
     void alignment() {
-        Vec2 AlignmentForce(0.0f, 0.0f);
-        int visited = 0;
+        #pragma omp parallel for
         for (int i = 0; i < (int) boids.size(); i++) {
-            visited = 0;
-            AlignmentForce.x = AlignmentForce.y = 0.0f;
+            Vec2 AlignmentForce(0.0f, 0.0f);
+            int visited = 0;
             for (int j = 0; j < (int) boids.size(); j++) {
                 if (i == j) continue;
                 Boid a = boids[i];
@@ -128,11 +127,10 @@ struct Simulation {
     }
 
     void cohesion() {
-        Vec2 CohesionForce(0.0f, 0.0f);
-        int visited = 0;
+        #pragma omp parallel for
         for (int i = 0; i < (int) boids.size(); i++) {
-            visited = 0;
-            CohesionForce.x = CohesionForce.y = 0.0f;
+            Vec2 CohesionForce(0.0f, 0.0f);
+            int visited = 0;
             for (int j = 0; j < (int) boids.size(); j++) {
                 if (i == j) continue;
                 Boid a = boids[i];

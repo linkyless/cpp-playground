@@ -27,6 +27,8 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+
+            // Click
             if (event->is<sf::Event::MouseButtonPressed>()) {
                 auto mousePos = sf::Mouse::getPosition(window);
                 Boid boid({(float)mousePos.x, (float)mousePos.y},
@@ -34,6 +36,18 @@ int main() {
                           {0.0f, 0.0f});
                 sim.addBoid(boid);
                 sim.resizeForces();
+            }
+
+            // Enter (Add 10 Boids)
+            if (auto key = event->getIf<sf::Event::KeyPressed>();
+                key && key->code == sf::Keyboard::Key::Enter) {
+                for (int i = 0; i < 10; i++) {
+                    Boid boid({kSizeWidth / 2.0f, kSizeHeight / 2.0f},
+                    {(float)dist(gen), (float)dist(gen)},
+                    {0.0f, 0.0f});
+                    sim.addBoid(boid);
+                    sim.resizeForces();
+                }
             }
         }
 
