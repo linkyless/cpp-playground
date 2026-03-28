@@ -2,8 +2,11 @@
 #include "Vec2.hpp"
 #include "Boids.hpp"
 #include "Simulation.hpp"
+#include "imgui.h"
+#include "imgui-SFML.h"
 #include <random>
 #include <vector>
+
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -14,6 +17,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Boids Sim");
     window.setFramerateLimit(60);
 
+    ImGui::SFML::Init(window);
+
     sf::Clock clock;
     Simulation sim;
     sim.init();
@@ -22,13 +27,18 @@ int main() {
     window.clear(sf::Color(10, 10, 20));
     window.display();
 
+    static bool showPanel = 0;
+
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
         while (const std::optional event = window.pollEvent()) {
+
+            ImGui::SFML::ProcessEvent(window, *event);
+
             if (event->is<sf::Event::Closed>())
                 window.close();
 
-            // Click
+            // Click (Add 1 Boid)
             if (event->is<sf::Event::MouseButtonPressed>()) {
                 auto mousePos = sf::Mouse::getPosition(window);
                 Boid boid({(float)mousePos.x, (float)mousePos.y},
@@ -49,6 +59,24 @@ int main() {
                     sim.resizeForces();
                 }
             }
+
+            // Tab (Show imgui panel)
+            if (auto key = event->getIf<sf::Event::KeyPressed>();
+                key && key->code == sf::Keyboard::Key::Tab)
+                showPanel = !showPanel;
+        }
+
+        ImGui::SFML::Update(window, dt);
+        
+        // ImGui panel
+        if (showPanel) {
+            ImGui::Begin("Panel");
+            ImGui::SliderFloat("Separation", &wSeparation, 0.0f, 5.0f);
+            ImGui::SliderFloat("Alignment",  &wAlignment,  0.0f, 5.0f);
+            ImGui::SliderFloat("Cohesion",   &wCohesion,   0.0f, 5.0f);
+            ImGui::Separator();
+            ImGui::Text("Boids: %d", (int)sim.boids.size());
+            ImGui::End();
         }
 
         sim.separation();
@@ -58,8 +86,12 @@ int main() {
 
         // no clear()
         sim.drawBoids(window);
-
         sim.resetAcceleration();
+
+        ImGui::SFML::Render(window);
+        
         window.display();
     }
+
+    ImGui::SFML::Shutdown();
 }

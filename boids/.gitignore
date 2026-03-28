@@ -1,0 +1,17 @@
+imgui.cpp
+imgui.h
+imgui_draw.cpp
+imgui_tables.cpp
+imgui_widgets.cpp
+imgui_internal.h
+imconfig.h
+imconfig-SFML.h
+imstb_rectpack.h
+imstb_textedit.h
+imstb_truetype.h
+imgui-SFML.h
+imgui-SFML.cpp
+imgui-SFML_export.h
+*.exe
+imgui-sfml/
+imgui/

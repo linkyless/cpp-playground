@@ -3,7 +3,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-float wSeparation = 2.45f;
+float wSeparation = 2.65f;
 float wAlignment  = 1.55f;
 float wCohesion   = 1.49f;
 
