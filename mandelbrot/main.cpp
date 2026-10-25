@@ -44,7 +44,7 @@ int main() {
             
             int maxIters = getMaxIters(width);
 
-            #pragma omp parallel for collapse(2)
+            #pragma omp parallel for collapse(2) schedule(dynamic, 16)
             for (int x = 0; x < kWidth; x++) {
                 for (int y = 0; y < kHeight; y++) {
                     Complex c;
